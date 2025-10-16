@@ -1,18 +1,32 @@
 import colors from 'colors';
-import {normalizeUrl} from "./normalizeUrl"; //@TODO remove
+import normalizeUrl from "./normalizeUrl";
+import {getErrorMessage} from "../utils/error";
 
 function scan(url: string) {
-    console.log(colors.blue(`[DEBUG] URL: ${url}`)); //@TODO remove
+    try {
+        // Clean URL
+        const startURL = normalizeUrl(url);
+        if (!startURL) {
+            return {
+                success: false,
+                message: `Invalid URL: ${url}`,
+            };
+        }
 
-    // Clean URL
-    const startURL = normalizeUrl(url);
-    if(!startURL) {
+        const domain = new URL(startURL).hostname.replace(/^www\./, '');
+
+        return {
+            success: true,
+            url: startURL,
+            domain: domain
+        };
+    } catch (error) {
         return {
             success: false,
-            message: `Invalid URL: ${url}`
+            message: `Invalid URL: ${url}`,
+            error: getErrorMessage(error)
         };
     }
-    console.log(colors.blue(`[DEBUG] Normalized URL: ${startURL}`)); //@TODO remove
 }
 
 export default scan;
