@@ -32,7 +32,7 @@ export default function normalizeUrl(url: string): string | undefined {
 
         return parsedUrl.toString();
     } catch (error) {
-        console.error(getErrorMessage(error));
+        console.error(`Error during URL normalization: ${getErrorMessage(error)}`);
         return;
     }
 }

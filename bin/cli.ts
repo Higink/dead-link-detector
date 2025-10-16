@@ -12,9 +12,10 @@ program
     .argument('<url>', 'Website URL to analyze')
     .action(async (url: string) => {
         try {
-            console.log(colors.green(`[DEBUG] URL: ${url}`)); //@TODO remove
-            await deadLinkDetector.scan(url);
-            console.log(colors.green("END OF cli()")); //@TODO remove
+            console.log(`Start from analysis: ${url}`);
+            const resultData = await deadLinkDetector.scan(url);
+            console.log('Result report:');
+            console.log(resultData);
             process.exit(0);
         } catch (error) {
             console.error(getErrorMessage(error));

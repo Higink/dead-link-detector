@@ -10,31 +10,30 @@ export function analyzeLink(link: string, sourceUrl: string): string | undefined
             || link.startsWith('ftp:')
             || link.startsWith('tel:')) {
             //@TODO search if can reverse condition (only http/https or relative)
-            console.log(colors.magenta(`[DEBUG] Link is not a page`)); //@TODO remove
             return;
         }
 
         const absoluteUrl = new URL(link, sourceUrl).toString();
         const normalizedUrl = normalizeUrl(absoluteUrl);
 
-        if(!isSameDomain(absoluteUrl, sourceUrl)) {
-            console.log(colors.magenta(`[DEBUG] Link is external`)); //@TODO remove
+        if (!isSameDomain(absoluteUrl, sourceUrl)) {
             return;
         }
 
         return normalizedUrl;
     } catch (error) {
-        console.error(colors.red(`Error analyzing link: ${getErrorMessage(error)}`));
+        console.error(`Error during link analysis: ${getErrorMessage(error)}`);
         return;
     }
 }
 
-function isSameDomain(url1: string, url2: string ): boolean {
+function isSameDomain(url1: string, url2: string): boolean {
     try {
-        const parsedUrl = new URL(url1);
-        const parsedDomain = new URL(url2);
-        return parsedUrl.hostname === parsedDomain.hostname;
+        const domain1 = new URL(url1).hostname.replace(/^www\./, '');
+        const domain2 = new URL(url2).hostname.replace(/^www\./, '');
+        return domain1 === domain2;
     } catch {
+        console.log(colors.red(`Error during domain comparison between ${url1} and ${url2}`));
         return false;
     }
 }
