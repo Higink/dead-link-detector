@@ -1,22 +1,25 @@
 import colors from 'colors'; //@TODO remove
 import {Command} from 'commander';
 import deadLinkDetector from '../src/index';
+import console from "node:console";
+import {getErrorMessage} from "../utils/error";
 
-/**
- * CLI entry point
- */
-function cli() {
-    const program = new Command();
-    program
-        .name('dead-link-detector')
-        .description('Explore a website and list all broken links')
-        .version('1.0.0')
-        .argument('<url>', 'Website URL to analyze')
-        .action((url: string) => {
+const program = new Command();
+program
+    .name('dead-link-detector')
+    .description('Explore a website and list all broken links')
+    .version('1.0.0')
+    .argument('<url>', 'Website URL to analyze')
+    .action(async (url: string) => {
+        try {
             console.log(colors.green(`[DEBUG] URL: ${url}`)); //@TODO remove
-            deadLinkDetector.scan(url);
-        });
-    program.parse();
-}
+            await deadLinkDetector.scan(url);
+            console.log(colors.green("END OF cli()")); //@TODO remove
+            process.exit(0);
+        } catch (error) {
+            console.error(getErrorMessage(error));
+            process.exit(1);
+        }
+    });
 
-cli();
+program.parse();

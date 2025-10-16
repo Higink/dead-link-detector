@@ -1,8 +1,10 @@
 import colors from 'colors';
 import normalizeUrl from "./normalizeUrl";
 import {getErrorMessage} from "../utils/error";
+import axios, {AxiosError} from 'axios';
+import * as cheerio from 'cheerio';
 
-function scan(url: string) {
+async function scan(url: string) {
     let domain;
     try {
         domain = new URL(url).hostname.replace(/^www\./, '');
@@ -15,7 +17,7 @@ function scan(url: string) {
 
     const urlsToVisit: Set<string> = new Set();
     const visitedUrls: Set<string> = new Set();
-    const visitedUrlsData: { url: string; status: number }[] = [];
+    const visitedUrlsData: { url: string; status: number | string }[] = [];
 
     // @TODO utiliser plus tard la fonction DETECT NEW URL qui normalise
     urlsToVisit.add(url)
@@ -35,15 +37,38 @@ function scan(url: string) {
         urlsToVisit.delete(currentUrl);
         visitedUrls.add(currentUrl);
 
-        // @TODO
+        try {
+            // Récupérer le contenu de la page
+            const response = await axios.get(url, {
+                validateStatus: () => true, // accept all status codes
+            });
 
-        visitedUrlsData.push({url: currentUrl, status: 200});
+            visitedUrlsData.push({url: currentUrl, status: 200});
+            // if the page is on error, stop here
+            if (response.status >= 300) {
+                continue;
+            }
+
+            //@TODO SCRAPE LINKS
+
+        } catch (error) {
+            // Error during the page fetch
+            console.error(colors.red(`Error during the page fetch ${url}: ${getErrorMessage(error)}`));
+
+            visitedUrlsData.push({
+                url: currentUrl,
+                status: "UNKNOWN_ERROR"
+            });
+            continue;
+        }
     }
 
-
+    console.log(colors.blue('END OF scan()')); //@TODO remove
     return {
         success: true,
-        domain: domain
+        domain: domain,
+        visitedUrls: Array.from(visitedUrls),
+        visitedUrlsData: visitedUrlsData
     };
 
 
