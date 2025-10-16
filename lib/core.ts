@@ -4,6 +4,8 @@ import {getErrorMessage} from "../utils/error";
 
 function scan(url: string) {
     try {
+        const domain = new URL(url).hostname.replace(/^www\./, '');
+
         // Clean URL
         const startURL = normalizeUrl(url);
         if (!startURL) {
@@ -13,7 +15,6 @@ function scan(url: string) {
             };
         }
 
-        const domain = new URL(startURL).hostname.replace(/^www\./, '');
 
         return {
             success: true,

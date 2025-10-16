@@ -8,7 +8,6 @@ import colors from "colors";
  * @returns {string | undefined}
  */
 export default function normalizeUrl(url: string): string | undefined {
-    console.log(colors.yellow(`[DEBUG] Normalizing URL: ${url}`)); //@TODO remove
     try {
         let normalizedUrl = url.trim();
 
