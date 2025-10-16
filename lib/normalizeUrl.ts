@@ -1,6 +1,5 @@
 import * as console from "node:console";
 import {getErrorMessage} from "../utils/error";
-import colors from "colors";
 
 /**
  * Normalize a URL by ensuring it has a protocol, removing trailing slashes (except for root), and stripping anchors.
