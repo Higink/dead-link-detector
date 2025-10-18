@@ -1,6 +1,7 @@
-import * as fs from "node:fs";
-import {getDomainFromUrl} from "../utils/url";
-import path = require("node:path");
+import * as fs from 'node:fs';
+import {getDomainFromUrl} from '../utils/url';
+import path = require('node:path');
+import {ScanResult} from '../types/scanResult';
 
 /**
  * Generates a filename for the output file based on the URL domain and current date
@@ -20,7 +21,7 @@ export function generateOutputFilename(url: string, format: string): string {
  * @param directory - The directory where the file will be saved
  * @param filename - The name of the output file
  */
-export function saveAsJSON(data: any, directory: string, filename: string): void {
+export function saveAsJSON(data: ScanResult, directory: string, filename: string): void {
     const filePath = `${directory}/${filename}`;
     writeToFile(filePath, JSON.stringify(data, null, 2));
 
@@ -32,7 +33,7 @@ export function saveAsJSON(data: any, directory: string, filename: string): void
  * @param directory - The directory where the file will be saved
  * @param filename - The name of the output file
  */
-export function saveAsCSV(data: any, directory: string, filename: string): void {
+export function saveAsCSV(data: ScanResult, directory: string, filename: string): void {
     const lines: string[] = [
         'URL;Status Code',
     ];
@@ -56,6 +57,6 @@ export function saveAsCSV(data: any, directory: string, filename: string): void 
  * @param content - The content to write to the file
  */
 function writeToFile(filePath: string, content: string): void {
-    fs.mkdirSync(path.dirname(filePath), { recursive: true });
+    fs.mkdirSync(path.dirname(filePath), {recursive: true});
     fs.writeFileSync(filePath, content);
 }

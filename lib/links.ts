@@ -1,7 +1,6 @@
-import normalizeUrl from "./normalizeUrl";
-import colors from "colors";
-import {getErrorMessage} from "../utils/error";
-import {getDomainFromUrl} from "../utils/url";
+import normalizeUrl from './normalizeUrl';
+import {getErrorMessage} from '../utils/error';
+import {getDomainFromUrl} from '../utils/url';
 
 /**
  * Analyzes a link found in a webpage and processes it for crawling
@@ -48,7 +47,7 @@ function isSameDomain(url1: string, url2: string): boolean {
         const domain2 = getDomainFromUrl(url2);
         return domain1 === domain2;
     } catch {
-        console.log(colors.red(`Error during domain comparison between ${url1} and ${url2}`));
+        console.warn(`Error during domain comparison between ${url1} and ${url2}`);
         return false;
     }
 }

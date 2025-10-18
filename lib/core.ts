@@ -1,10 +1,11 @@
-import colors from 'colors';
-import {getErrorMessage} from "../utils/error";
+import {getErrorMessage} from '../utils/error';
 import axios, {AxiosError} from 'axios';
 import * as cheerio from 'cheerio';
-import {analyzeLink} from "./links";
-import {getDomainFromUrl} from "../utils/url";
-import normalizeUrl from "./normalizeUrl";
+import {analyzeLink} from './links';
+import {getDomainFromUrl} from '../utils/url';
+import normalizeUrl from './normalizeUrl';
+import {ScanResult} from '../types/scanResult';
+import {VisitedUrlData} from '../types/visitedUrlData';
 
 /**
  * Performs a complete scan of a website starting from a given URL
@@ -16,35 +17,40 @@ import normalizeUrl from "./normalizeUrl";
  *   - error: error message if success is false
  *   - visitedUrlsData: array of objects containing visited URLs and their status codes
  */
-async function scan(url: string) {
+
+export async function scan(url: string): Promise<ScanResult> {
     let normalizedURL;
     let domain;
 
     try {
         normalizedURL = normalizeUrl(url);
         domain = getDomainFromUrl(url);
-        if(!normalizedURL || !domain) {
-            throw new Error("The URL is not valid");
+        if (!normalizedURL || !domain) {
+            throw new Error('The URL is not valid');
         }
     } catch (error) {
         return {
+            generatedAt: new Date().toISOString(),
+            domain: url,
             success: false,
-            error: getErrorMessage(error)
+            error: getErrorMessage(error),
+            visitedUrls: [],
+            visitedUrlsData: []
         };
     }
 
     const urlsToVisit: Set<string> = new Set();
     const visitedUrls: Set<string> = new Set();
-    const visitedUrlsData: { url: string; status: number | string }[] = [];
+    const visitedUrlsData: VisitedUrlData[] = [];
 
-    urlsToVisit.add(normalizedURL)
+    urlsToVisit.add(normalizedURL);
 
     while (urlsToVisit.size > 0) {
         const currentUrl = urlsToVisit.values().next().value;
-        console.log(colors.rainbow(`[Visited:${visitedUrls.size}|Remaining:${urlsToVisit.size}]`));
+        console.log(`[Visited:${visitedUrls.size}|Remaining:${urlsToVisit.size}]`);
         console.log(`Start new analysis: ${currentUrl}`);
 
-        if (typeof currentUrl !== "string") {
+        if (typeof currentUrl !== 'string') {
             console.error(`URL isn’t a string: ${currentUrl}`);
             // @ts-ignore
             urlsToVisit.delete(currentUrl); //@TODO fix ts-ignore
@@ -91,25 +97,16 @@ async function scan(url: string) {
 
         } catch (error) {
             // Error during the page fetch
-            console.error(`Error during the page fetch: ${getErrorMessage(error)}`);
             let errorType: number | string = 'UNKNOWN_ERROR';
-
-            if (axios.isAxiosError(error)) {
-                const axiosError = error as AxiosError;
-
+            const axiosError = error as AxiosError;
+            if (axiosError.isAxiosError) {
                 if (axiosError.code === 'ECONNABORTED' || axiosError.code === 'ETIMEDOUT') {
                     errorType = 'TIMEOUT';
-                }
-
-                if (axiosError.code === 'ENOTFOUND') {
+                } else if (axiosError.code === 'ENOTFOUND') {
                     errorType = 'DNS_ERROR';
-                }
-
-                if (axiosError.code === 'ECONNREFUSED') {
+                } else if (axiosError.code === 'ECONNREFUSED') {
                     errorType = 'CONNECTION_REFUSED';
-                }
-
-                if (axiosError.response) {
+                } else if (axiosError.response) {
                     errorType = axiosError.response.status;
                 }
             }
@@ -122,7 +119,7 @@ async function scan(url: string) {
         }
     }
 
-    console.log("End of scan");
+    console.log('End of scan');
     return {
         generatedAt: new Date().toISOString(),
         domain: domain,

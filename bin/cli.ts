@@ -15,10 +15,9 @@
 
 import {Command} from 'commander';
 import deadLinkDetector from '../src/index';
-import console from "node:console";
-import {getErrorMessage} from "../utils/error";
-import {generateOutputFilename, saveAsCSV, saveAsJSON} from "../lib/save";
-import colors from "colors";
+import console from 'node:console';
+import {getErrorMessage} from '../utils/error';
+import {generateOutputFilename, saveAsCSV, saveAsJSON} from '../lib/save';
 
 const program = new Command();
 program
@@ -42,12 +41,12 @@ program
                 const filename = options.output || generateOutputFilename(url, format);
                 switch (format) {
                     case 'json':
-                        console.log(colors.green('Saving results as JSON...'));
+                        console.log('Saving results as JSON...');
                         saveAsJSON(resultData, options.directory || '.', filename);
                         console.log(`Results saved in: ${filename}`);
                         break;
                     case 'csv':
-                        console.log(colors.green('Saving results as CSV...'));
+                        console.log('Saving results as CSV...');
                         saveAsCSV(resultData, options.directory || '.', filename);
                         console.log(`Results saved in: ${filename}`);
                         break;

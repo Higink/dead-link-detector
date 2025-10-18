@@ -1,6 +1,6 @@
-import * as console from "node:console";
-import {getErrorMessage} from "../utils/error";
-import {stringToURL} from "../utils/url";
+import * as console from 'node:console';
+import {getErrorMessage} from '../utils/error';
+import {stringToURL} from '../utils/url';
 
 /**
  * Normalizes a URL by applying several transformations:

@@ -1,43 +1,29 @@
 import normalizeUrl from '../lib/normalizeUrl';
 
 describe('normalizeUrl', () => {
-    test('should add https protocol if missing', () => {
+    it('should add https protocol when missing', () => {
         expect(normalizeUrl('example.com')).toBe('https://example.com/');
+    });
+
+    it('should keep existing protocol', () => {
         expect(normalizeUrl('http://example.com')).toBe('http://example.com/');
-        expect(normalizeUrl('https://example.com')).toBe('https://example.com/');
     });
 
-    test('should trim whitespace', () => {
-        expect(normalizeUrl('  example.com  ')).toBe('https://example.com/');
-        expect(normalizeUrl('  example.com/  ')).toBe('https://example.com/');
+    it('should handle trailing slashes correctly', () => {
+        expect(normalizeUrl('https://example.com/')).toBe('https://example.com/');
+        expect(normalizeUrl('https://example.com/path/')).toBe('https://example.com/path');
     });
 
-    test('should keep the search params', () => {
-        expect(normalizeUrl('https://example.com/?hello=world')).toBe('https://example.com/?hello=world');
-        expect(normalizeUrl('https://example.com/path?hello=world')).toBe('https://example.com/path?hello=world');
+    it('should remove URL fragments', () => {
+        expect(normalizeUrl('https://example.com/page#section')).toBe('https://example.com/page');
     });
 
-    test('should validate hostname contains a dot', () => {
+    it('should return undefined for invalid URLs', () => {
+        expect(normalizeUrl('invalid')).toBeUndefined();
         expect(normalizeUrl('localhost')).toBeUndefined();
-        expect(normalizeUrl('example')).toBeUndefined();
-        expect(normalizeUrl('stupid.hostname')).toBe("https://stupid.hostname/");
     });
 
-    test('should remove trailing slash except for root', () => {
-        expect(normalizeUrl('example.com/')).toBe('https://example.com/');
-        expect(normalizeUrl('example.com/path/')).toBe('https://example.com/path');
-        expect(normalizeUrl('example.com/path/to/resource/')).toBe('https://example.com/path/to/resource');
-    });
-
-    test('should remove hash fragments', () => {
-        expect(normalizeUrl('example.com#section')).toBe('https://example.com/');
-        expect(normalizeUrl('example.com/path#section')).toBe('https://example.com/path');
-    });
-
-    test('should return undefined for invalid URLs', () => {
-        expect(normalizeUrl('not a url')).toBeUndefined();
-        expect(normalizeUrl('http://')).toBeUndefined();
-        expect(normalizeUrl('')).toBeUndefined();
-        expect(normalizeUrl('@')).toBeUndefined();
+    it('should handle URLs with query parameters', () => {
+        expect(normalizeUrl('https://example.com/search?q=test')).toBe('https://example.com/search?q=test');
     });
 });

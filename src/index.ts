@@ -1,4 +1,4 @@
-import scan from "../lib/core";
+import scan from '../lib/core';
 
 export default {
     scan
