@@ -7,6 +7,10 @@ import {analyzeLink} from "./links";
 async function scan(url: string) {
     let domain;
     try {
+        // add protocol if missing
+        if (!/^https?:\/\//i.test(url)) {
+            url = `http://${url}`;
+        }
         domain = new URL(url).hostname.replace(/^www\./, '');
     } catch (error) {
         return {
