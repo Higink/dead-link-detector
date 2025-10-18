@@ -3,6 +3,13 @@ import colors from "colors";
 import {getErrorMessage} from "../utils/error";
 import {getDomainFromUrl} from "../utils/url";
 
+/**
+ * Analyzes a link found in a webpage and processes it for crawling
+ *
+ * @param link - The link URL to analyze (can be relative or absolute)
+ * @param sourceUrl - The URL of the page where the link was found
+ * @returns The normalized absolute URL if it's valid and from the same domain, undefined otherwise
+ */
 export function analyzeLink(link: string, sourceUrl: string): string | undefined {
     try {
         // Ignore other links types than page links
@@ -28,6 +35,13 @@ export function analyzeLink(link: string, sourceUrl: string): string | undefined
     }
 }
 
+/**
+ * Checks if two URLs belong to the same domain
+ *
+ * @param url1 - First URL to compare
+ * @param url2 - Second URL to compare
+ * @returns true if both URLs have the same domain, false otherwise
+ */
 function isSameDomain(url1: string, url2: string): boolean {
     try {
         const domain1 = getDomainFromUrl(url1);

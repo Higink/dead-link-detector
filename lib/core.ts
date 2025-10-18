@@ -6,6 +6,16 @@ import {analyzeLink} from "./links";
 import {getDomainFromUrl} from "../utils/url";
 import normalizeUrl from "./normalizeUrl";
 
+/**
+ * Performs a complete scan of a website starting from a given URL
+ * Crawls all internal links and checks their HTTP status
+ *
+ * @param url - The starting URL to scan
+ * @returns An object containing:
+ *   - success: boolean indicating if the scan was successful
+ *   - error: error message if success is false
+ *   - visitedUrlsData: array of objects containing visited URLs and their status codes
+ */
 async function scan(url: string) {
     let normalizedURL;
     let domain;

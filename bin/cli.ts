@@ -1,3 +1,18 @@
+/**
+ * Command Line Interface for the Dead Link Detector
+ * Provides a CLI tool to scan websites for broken links
+ *
+ * Commands:
+ * - <url>: Website URL to analyze (required)
+ *
+ * Options:
+ * - -f, --format: Output format (json or csv)
+ * - -d, --directory: Output directory for results
+ * - -o, --output: Custom output filename
+ * - -v, --version: Display version
+ * - -h, --help: Display help
+ */
+
 import {Command} from 'commander';
 import deadLinkDetector from '../src/index';
 import console from "node:console";

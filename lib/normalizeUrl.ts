@@ -3,9 +3,22 @@ import {getErrorMessage} from "../utils/error";
 import {stringToURL} from "../utils/url";
 
 /**
- * Normalize a URL by ensuring it has a protocol, removing trailing slashes (except for root), and stripping anchors.
- * @param url
- * @returns {string | undefined}
+ * Normalizes a URL by applying several transformations:
+ * - Ensures the URL has a protocol (uses https:// if missing)
+ * - Validates that the hostname contains at least one dot (.)
+ * - Removes trailing slashes from paths (except for root path /)
+ * - Removes URL fragments/anchors
+ *
+ * @param url - The URL string to normalize
+ * @returns The normalized URL string, or undefined if:
+ *   - The URL is invalid
+ *   - The hostname doesn't contain a dot
+ *   - An error occurs during normalization
+ *
+ * @example
+ * normalizeUrl("example.com/path/") // returns "https://example.com/path"
+ * normalizeUrl("https://test.com/page/#section") // returns "https://test.com/page"
+ * normalizeUrl("invalid") // returns undefined
  */
 export default function normalizeUrl(url: string): string | undefined {
     try {
