@@ -1,6 +1,7 @@
 import normalizeUrl from "./normalizeUrl";
 import colors from "colors";
 import {getErrorMessage} from "../utils/error";
+import {getDomainFromUrl} from "../utils/url";
 
 export function analyzeLink(link: string, sourceUrl: string): string | undefined {
     try {
@@ -29,8 +30,8 @@ export function analyzeLink(link: string, sourceUrl: string): string | undefined
 
 function isSameDomain(url1: string, url2: string): boolean {
     try {
-        const domain1 = new URL(url1).hostname.replace(/^www\./, '');
-        const domain2 = new URL(url2).hostname.replace(/^www\./, '');
+        const domain1 = getDomainFromUrl(url1);
+        const domain2 = getDomainFromUrl(url2);
         return domain1 === domain2;
     } catch {
         console.log(colors.red(`Error during domain comparison between ${url1} and ${url2}`));

@@ -1,5 +1,6 @@
 import * as console from "node:console";
 import {getErrorMessage} from "../utils/error";
+import {stringToURL} from "../utils/url";
 
 /**
  * Normalize a URL by ensuring it has a protocol, removing trailing slashes (except for root), and stripping anchors.
@@ -8,14 +9,8 @@ import {getErrorMessage} from "../utils/error";
  */
 export default function normalizeUrl(url: string): string | undefined {
     try {
-        let normalizedUrl = url.trim();
-
-        // Add protocol if missing
-        if (!normalizedUrl.match(/^https?:\/\//)) {
-            normalizedUrl = 'https://' + normalizedUrl;
-        }
-
-        const parsedUrl = new URL(normalizedUrl);
+        // Ensure the URL has a protocol
+        const parsedUrl = stringToURL(url);
 
         // Check if it's a valid hostname (contains at least one dot)
         if (!parsedUrl.hostname.includes('.')) {

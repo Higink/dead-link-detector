@@ -3,15 +3,19 @@ import {getErrorMessage} from "../utils/error";
 import axios, {AxiosError} from 'axios';
 import * as cheerio from 'cheerio';
 import {analyzeLink} from "./links";
+import {getDomainFromUrl} from "../utils/url";
+import normalizeUrl from "./normalizeUrl";
 
 async function scan(url: string) {
+    let normalizedURL;
     let domain;
+
     try {
-        // add protocol if missing
-        if (!/^https?:\/\//i.test(url)) {
-            url = `http://${url}`;
+        normalizedURL = normalizeUrl(url);
+        domain = getDomainFromUrl(url);
+        if(!normalizedURL || !domain) {
+            throw new Error("The URL is not valid");
         }
-        domain = new URL(url).hostname.replace(/^www\./, '');
     } catch (error) {
         return {
             success: false,
@@ -23,9 +27,7 @@ async function scan(url: string) {
     const visitedUrls: Set<string> = new Set();
     const visitedUrlsData: { url: string; status: number | string }[] = [];
 
-    // @TODO utiliser plus tard la fonction DETECT NEW URL qui normalise
-    urlsToVisit.add(url)
-
+    urlsToVisit.add(normalizedURL)
 
     while (urlsToVisit.size > 0) {
         const currentUrl = urlsToVisit.values().next().value;
@@ -112,8 +114,9 @@ async function scan(url: string) {
 
     console.log("End of scan");
     return {
-        success: true,
+        generatedAt: new Date().toISOString(),
         domain: domain,
+        success: true,
         visitedUrls: Array.from(visitedUrls),
         visitedUrlsData: visitedUrlsData
     };
