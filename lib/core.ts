@@ -6,6 +6,7 @@ import {getDomainFromUrl} from '../utils/url';
 import normalizeUrl from './normalizeUrl';
 import {ScanResult} from '../types/scanResult';
 import {VisitedUrlData} from '../types/visitedUrlData';
+import {ScanOptions} from '../types/scanOptions';
 
 /**
  * Performs a complete scan of a website starting from a given URL
@@ -14,12 +15,13 @@ import {VisitedUrlData} from '../types/visitedUrlData';
  * @param url - The starting URL to scan
  * @param options - Scan options
  * @param options.userAgent - Custom User-Agent string for HTTP requests
+ * @param options.timeout - Request timeout in milliseconds
  * @returns An object containing:
  *   - success: boolean indicating if the scan was successful
  *   - error: error message if success is false
  *   - visitedUrlsData: array of objects containing visited URLs and their status codes
  */
-export async function scan(url: string, options: { userAgent?: string }): Promise<ScanResult> {
+export async function scan(url: string, options: ScanOptions = {}): Promise<ScanResult> {
     let normalizedURL;
     let domain;
 
@@ -57,7 +59,7 @@ export async function scan(url: string, options: { userAgent?: string }): Promis
         if (typeof currentUrl !== 'string') {
             console.error(`URL isn’t a string: ${currentUrl}`);
             // @ts-ignore
-            urlsToVisit.delete(currentUrl); //@TODO fix ts-ignore
+            urlsToVisit.delete(currentUrl);
             continue;
         }
 
@@ -70,6 +72,7 @@ export async function scan(url: string, options: { userAgent?: string }): Promis
                 headers: {
                     'User-Agent': options.userAgent  || 'Mozilla/5.0 (compatible; DeadLinkDetector/1.0)',
                 },
+                timeout: options.timeout || 0, // default axios is no timeout
                 validateStatus: () => true, // accept all status codes
             });
 

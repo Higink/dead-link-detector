@@ -28,12 +28,14 @@ program
     .option('-f, --format <format>', 'Output format (json or csv)')
     .option('-d, --directory <path>', 'Output directory')
     .option('-o, --output <filename>', 'Output filename')
+    .option('-t, --timeout <number>', 'Request timeout in milliseconds')
     .option('-u, --user-agent <string>', 'Custom User-Agent string')
     .action(async (url: string, options) => {
         try {
             console.log(`Start from analysis: ${url}`);
             const resultData = await deadLinkDetector.scan(url, {
                 userAgent: options.userAgent,
+                timeout: options.timeout,
             });
 
             console.log('Result report:');
