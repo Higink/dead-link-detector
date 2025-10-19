@@ -12,6 +12,10 @@ export interface ScanResult {
     success: boolean;
     /** Error message if success is false */
     error?: string;
+    /** Total number of visited URLs */
+    totalVisitedUrls: number;
+    /** Count of HTTP status codes returned during the scan */
+    statusCodesCount: {[key: string]: number};
     /** List of visited URLs */
     visitedUrls: string[];
     /** Detailed data about visited URLs */

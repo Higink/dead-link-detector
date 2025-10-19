@@ -17,7 +17,6 @@ import {VisitedUrlData} from '../types/visitedUrlData';
  *   - error: error message if success is false
  *   - visitedUrlsData: array of objects containing visited URLs and their status codes
  */
-
 export async function scan(url: string): Promise<ScanResult> {
     let normalizedURL;
     let domain;
@@ -34,6 +33,8 @@ export async function scan(url: string): Promise<ScanResult> {
             domain: url,
             success: false,
             error: getErrorMessage(error),
+            totalVisitedUrls: 0,
+            statusCodesCount: {},
             visitedUrls: [],
             visitedUrlsData: []
         };
@@ -42,6 +43,7 @@ export async function scan(url: string): Promise<ScanResult> {
     const urlsToVisit: Set<string> = new Set();
     const visitedUrls: Set<string> = new Set();
     const visitedUrlsData: VisitedUrlData[] = [];
+    const statusCodesCount: {[key: string]: number} = {};
 
     urlsToVisit.add(normalizedURL);
 
@@ -67,6 +69,7 @@ export async function scan(url: string): Promise<ScanResult> {
             });
 
             console.log(`Page status: ${response.status}`);
+            statusCodesCount[response.status] = (statusCodesCount[response.status] || 0) + 1;
             visitedUrlsData.push({url: currentUrl, status: response.status});
 
             // if the axios call return an error status code
@@ -112,6 +115,7 @@ export async function scan(url: string): Promise<ScanResult> {
             }
 
             console.log(`Page status: ${errorType}`);
+            statusCodesCount[errorType] = (statusCodesCount[errorType] || 0) + 1;
             visitedUrlsData.push({
                 url: currentUrl,
                 status: errorType
@@ -124,6 +128,8 @@ export async function scan(url: string): Promise<ScanResult> {
         generatedAt: new Date().toISOString(),
         domain: domain,
         success: true,
+        totalVisitedUrls: visitedUrls.size,
+        statusCodesCount: statusCodesCount,
         visitedUrls: Array.from(visitedUrls),
         visitedUrlsData: visitedUrlsData
     };
