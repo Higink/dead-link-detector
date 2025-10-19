@@ -1,4 +1,4 @@
-import {VisitedUrlData} from './visitedUrlData';
+import {VisitedUrlData} from './visitedUrlData.js';
 
 /**
  * Result of the scan of a URL

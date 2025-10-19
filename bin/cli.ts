@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 /**
  * Command Line Interface for the Dead Link Detector
  * Provides a CLI tool to scan websites for broken links
