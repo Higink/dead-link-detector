@@ -28,10 +28,14 @@ program
     .option('-f, --format <format>', 'Output format (json or csv)')
     .option('-d, --directory <path>', 'Output directory')
     .option('-o, --output <filename>', 'Output filename')
+    .option('-u, --user-agent <string>', 'Custom User-Agent string')
     .action(async (url: string, options) => {
         try {
             console.log(`Start from analysis: ${url}`);
-            const resultData = await deadLinkDetector.scan(url);
+            const resultData = await deadLinkDetector.scan(url, {
+                userAgent: options.userAgent,
+            });
+
             console.log('Result report:');
             console.log(resultData);
 

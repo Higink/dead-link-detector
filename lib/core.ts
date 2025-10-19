@@ -12,12 +12,14 @@ import {VisitedUrlData} from '../types/visitedUrlData';
  * Crawls all internal links and checks their HTTP status
  *
  * @param url - The starting URL to scan
+ * @param options - Scan options
+ * @param options.userAgent - Custom User-Agent string for HTTP requests
  * @returns An object containing:
  *   - success: boolean indicating if the scan was successful
  *   - error: error message if success is false
  *   - visitedUrlsData: array of objects containing visited URLs and their status codes
  */
-export async function scan(url: string): Promise<ScanResult> {
+export async function scan(url: string, options: { userAgent?: string }): Promise<ScanResult> {
     let normalizedURL;
     let domain;
 
@@ -65,6 +67,9 @@ export async function scan(url: string): Promise<ScanResult> {
         try {
             // Get the page content
             const response = await axios.get(currentUrl, {
+                headers: {
+                    'User-Agent': options.userAgent  || 'Mozilla/5.0 (compatible; DeadLinkDetector/1.0)',
+                },
                 validateStatus: () => true, // accept all status codes
             });
 
