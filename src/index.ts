@@ -1,5 +1,3 @@
 import scan from '../lib/core';
 
-export default {
-    scan
-};
+export default scan;

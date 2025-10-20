@@ -14,8 +14,8 @@
  * - -h, --help: Display help
  */
 
-import {Command} from 'commander';
 import deadLinkDetector from '../src/index';
+import {Command} from 'commander';
 import console from 'node:console';
 import {getErrorMessage} from '../utils/error';
 import {generateOutputFilename, saveAsCSV, saveAsJSON} from '../lib/save';
@@ -34,7 +34,7 @@ program
     .action(async (url: string, options) => {
         try {
             console.log(`Start from analysis: ${url}`);
-            const resultData = await deadLinkDetector.scan(url, {
+            const resultData = await deadLinkDetector(url, {
                 userAgent: options.userAgent,
                 timeout: options.timeout,
             });

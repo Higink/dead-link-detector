@@ -1,5 +1,6 @@
-import {scan} from '../lib/core';
+import deadLinkDetector from '../src/index';
 import axios, {AxiosError} from 'axios';
+
 
 // Mock axios
 jest.mock('axios');
@@ -11,7 +12,7 @@ describe('Core Scanner', () => {
     });
 
     it('should handle invalid URLs', async () => {
-        const result = await scan('invalid-url');
+        const result = await deadLinkDetector('invalid-url');
         expect(result.success).toBe(false);
         expect(result.error).toBeDefined();
     });
@@ -23,7 +24,7 @@ describe('Core Scanner', () => {
             data: '<html><body><a href="https://example.com/page2">Link</a></body></html>'
         });
 
-        const result = await scan('https://example.com');
+        const result = await deadLinkDetector('https://example.com');
 
         expect(result.success).toBe(true);
         expect(result.error).toBeUndefined();
@@ -33,7 +34,7 @@ describe('Core Scanner', () => {
     it('should handle network errors', async () => {
         mockedAxios.get.mockRejectedValueOnce(new Error('Network error'));
 
-        const result = await scan('https://example.com');
+        const result = await deadLinkDetector('https://example.com');
 
         expect(result.success).toBe(true);
         expect(result.visitedUrlsData).toBeDefined();
@@ -52,7 +53,7 @@ describe('Core Scanner', () => {
                 response: {status: 404}
             });
 
-        const result = await scan('https://example.com');
+        const result = await deadLinkDetector('https://example.com');
 
         expect(result.success).toBe(true);
         expect((result.visitedUrlsData ?? []).some(data => data.status === 200)).toBe(true);
@@ -60,7 +61,7 @@ describe('Core Scanner', () => {
     });
 
     test('should handle invalid URLs correctly', async () => {
-        const result = await scan('not-a-valid-url');
+        const result = await deadLinkDetector('not-a-valid-url');
         expect(result.success).toBe(false);
         expect(result.error).toBeDefined();
     });
@@ -71,7 +72,7 @@ describe('Core Scanner', () => {
         error.isAxiosError = true;
         mockedAxios.get.mockRejectedValueOnce(error);
 
-        const result = await scan('https://example.com');
+        const result = await deadLinkDetector('https://example.com');
         expect(result.success).toBe(true);
         expect((result.visitedUrlsData[0] ?? {}).status).toBe('TIMEOUT');
     });
@@ -82,7 +83,7 @@ describe('Core Scanner', () => {
         error.isAxiosError = true;
         mockedAxios.get.mockRejectedValueOnce(error);
 
-        const result = await scan('https://example.com');
+        const result = await deadLinkDetector('https://example.com');
         expect(result.success).toBe(true);
         expect((result.visitedUrlsData[0] ?? {}).status).toBe('DNS_ERROR');
     });
@@ -93,7 +94,7 @@ describe('Core Scanner', () => {
         error.isAxiosError = true;
         mockedAxios.get.mockRejectedValueOnce(error);
 
-        const result = await scan('https://example.com');
+        const result = await deadLinkDetector('https://example.com');
         expect(result.success).toBe(true);
         expect((result.visitedUrlsData[0] ?? {}).status).toBe('CONNECTION_REFUSED');
     });
@@ -104,7 +105,7 @@ describe('Core Scanner', () => {
             data: '<html></html>'
         });
 
-        const result = await scan('https://example.com');
+        const result = await deadLinkDetector('https://example.com');
         expect(result.success).toBe(true);
         expect((result.visitedUrlsData[0] ?? {}).status).toBe(404);
 
@@ -127,7 +128,7 @@ describe('Core Scanner', () => {
                 data: '<html></html>'
             });
 
-        const result = await scan('https://example.com');
+        const result = await deadLinkDetector('https://example.com');
         expect(result.success).toBe(true);
         expect(result.visitedUrls.length).toBeGreaterThan(1);
     });
@@ -138,7 +139,7 @@ describe('Core Scanner', () => {
             data: '<html><a href="malformed>'
         });
 
-        const result = await scan('https://example.com');
+        const result = await deadLinkDetector('https://example.com');
         expect(result.success).toBe(true);
         expect((result.visitedUrlsData[0] ?? {}).status).toBe(200);
     });
@@ -149,7 +150,7 @@ describe('Core Scanner', () => {
             data: 'Plain text content'
         });
 
-        const result = await scan('https://example.com');
+        const result = await deadLinkDetector('https://example.com');
         expect(result.success).toBe(true);
         expect((result.visitedUrlsData[0] ?? {}).status).toBe(200);
     });
