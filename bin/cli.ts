@@ -24,7 +24,7 @@ const program = new Command();
 program
     .name('dead-link-detector')
     .description('Explore a website and list all broken links')
-    .version('1.0.0')
+    .version('1.0.1')
     .argument('<url>', 'Website URL to analyze')
     .option('-f, --format <format>', 'Output format (json or csv)')
     .option('-d, --directory <path>', 'Output directory')

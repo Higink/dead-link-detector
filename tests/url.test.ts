@@ -15,6 +15,14 @@ describe('URL Utils', () => {
             const domain = getDomainFromUrl('invalid');
             expect(domain).toBe('invalid');
         });
+
+        it('should handle URLs with ports', () => {
+            expect(getDomainFromUrl('http://example.com:8080')).toBe('example.com');
+        });
+
+        it('should handle URLs with authentication', () => {
+            expect(getDomainFromUrl('http://user:pass@example.com')).toBe('example.com');
+        });
     });
 
     describe('stringToURL', () => {
@@ -29,7 +37,18 @@ describe('URL Utils', () => {
             expect(url.protocol).toBe('https:');
         });
 
+        it('should handle query parameters', () => {
+            const url = stringToURL('https://example.com/search?q=test&page=1');
+            expect(url.search).toBe('?q=test&page=1');
+        });
+
+        it('should handle ports', () => {
+            const url = stringToURL('https://example.com:8080');
+            expect(url.port).toBe('8080');
+        });
+
         it('should throw error for invalid URLs', () => {
+            expect(() => stringToURL(':::invalid')).toThrow();
             expect(() => stringToURL('')).toThrow();
         });
     });

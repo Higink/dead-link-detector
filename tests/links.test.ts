@@ -5,6 +5,8 @@ describe('analyzeLink', () => {
 
     test('should handle valid relative URLs', () => {
         expect(analyzeLink('/other-page', baseUrl)).toBe('https://example.com/other-page');
+        expect(analyzeLink('/page1', baseUrl)).toBe('https://example.com/page1');
+        expect(analyzeLink('./section/page2', baseUrl)).toBe('https://example.com/section/page2');
     });
 
     test('should handle valid absolute URLs from same domain', () => {
@@ -29,7 +31,31 @@ describe('analyzeLink', () => {
 
     test('should normalize URLs correctly', () => {
         expect(analyzeLink('https://example.com/path/', baseUrl)).toBe('https://example.com/path');
-        expect(analyzeLink('https://example.com/path?param=value', baseUrl))
-            .toBe('https://example.com/path?param=value');
+        expect(analyzeLink('https://example.com/path?param=value', baseUrl)).toBe('https://example.com/path?param=value');
+        expect(analyzeLink('path/to/page', baseUrl)).toBe('https://example.com/path/to/page');
+        expect(analyzeLink('invalid-url', baseUrl)).toBe('https://example.com/invalid-url');
+    });
+
+    it('should ignore external domain URLs', () => {
+        expect(analyzeLink('https://other-domain.com', baseUrl)).toBeUndefined();
+        expect(analyzeLink('https://sub.other-domain.com', baseUrl)).toBeUndefined();
+    });
+
+    it('should ignore severely malformed URLs', () => {
+        expect(analyzeLink('javascript:alert(1)', baseUrl)).toBeUndefined();
+        expect(analyzeLink('data:text/plain;base64,SGVsbG8sIFdvcmxkIQ==', baseUrl)).toBeUndefined();
+    });
+
+    it('should handle subdomain URLs correctly', () => {
+        const subdomainBase = 'https://blog.example.com';
+        expect(analyzeLink('https://blog.example.com/post', subdomainBase))
+            .toBe('https://blog.example.com/post');
+        expect(analyzeLink('https://other.example.com/post', subdomainBase))
+            .toBeUndefined();
+    });
+
+    it('should normalize URLs with query parameters', () => {
+        expect(analyzeLink('/search?q=test&page=1', baseUrl))
+            .toBe('https://example.com/search?q=test&page=1');
     });
 });
