@@ -28,7 +28,9 @@
     "dead-link-detector": "dist/bin/cli.js"
   },
   "files": [
-    "dist"
+    "dist/**/*",
+    "!dist/tests",
+    "!dist/tests/**/*"
   ],
   "scripts": {
     "test": "jest",
