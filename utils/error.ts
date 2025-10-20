@@ -4,7 +4,6 @@
  * @returns string
  */
 export function getErrorMessage(error: unknown): string {
-    // @ts-ignore
     if (error instanceof Error) {
         return error.message.toString();
     }
