@@ -53,6 +53,7 @@ export async function scan(url: string, options: ScanOptions = {}): Promise<Scan
 
     while (urlsToVisit.size > 0) {
         const currentUrl = urlsToVisit.values().next().value;
+        console.log('\r\n===============================');
         console.log(`[Visited:${visitedUrls.size}|Remaining:${urlsToVisit.size}]`);
         console.log(`Start new analysis: ${currentUrl}`);
 
@@ -80,11 +81,6 @@ export async function scan(url: string, options: ScanOptions = {}): Promise<Scan
             statusCodesCount[response.status] = (statusCodesCount[response.status] || 0) + 1;
             visitedUrlsData.push({url: currentUrl, status: response.status});
 
-            // if the axios call return an error status code
-            if (response.status >= 300) {
-                continue;
-            }
-
             // Parse HTML
             const $ = cheerio.load(response.data);
 
@@ -99,7 +95,7 @@ export async function scan(url: string, options: ScanOptions = {}): Promise<Scan
 
             // Process each link
             for (const link of links) {
-                const validatedLink = analyzeLink(link, url);
+                const validatedLink = analyzeLink(link, normalizedURL);
                 if (validatedLink && !visitedUrls.has(validatedLink) && !urlsToVisit.has(validatedLink)) {
                     console.log(`\tFound a new link to visit: ${link}`);
                     urlsToVisit.add(validatedLink);

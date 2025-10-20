@@ -108,4 +108,5 @@ export interface ScanResult {
 ## License
 
 This project is licensed under CC BY-NC-SA.  
+
 ![CC BY-NC-SA](https://mirrors.creativecommons.org/presskit/buttons/88x31/png/by-nc-sa.png)
